@@ -10,8 +10,22 @@ import { theme } from "~/theme";
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { refetchOnWindowFocus: false, retry: false, staleTime: Infinity },
-  },
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+      staleTime: Infinity,
+      onError: (error: any) => {
+        switch (error.response.status) {
+          case 401:
+            window.alert('Authorization header is not provided')
+            break
+          case 403:
+            window.alert('Access is denied')
+            break
+        }
+      },
+    }
+  }
 });
 
 const container = document.getElementById("app");
