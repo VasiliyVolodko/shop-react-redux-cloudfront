@@ -10,14 +10,23 @@ import { theme } from "~/theme";
 
 const queryClient = new QueryClient({
   defaultOptions: {
-    queries: { refetchOnWindowFocus: false, retry: false, staleTime: Infinity },
-  },
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+      staleTime: Infinity,
+      onError: (error: any) => {
+        switch (error.response.status) {
+          case 401:
+            window.alert('Authorization header is not provided')
+            break
+          case 403:
+            window.alert('Access is denied')
+            break
+        }
+      },
+    }
+  }
 });
-
-if (import.meta.env.DEV) {
-  const { worker } = await import("./mocks/browser");
-  worker.start({ onUnhandledRequest: "bypass" });
-}
 
 const container = document.getElementById("app");
 // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
